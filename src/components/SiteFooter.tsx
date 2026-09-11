@@ -24,6 +24,7 @@ export function SiteFooter() {
                 { to: '/candidate/lo-trinh', label: 'Lộ trình' },
                 { to: '/candidate/careers', label: 'Khám phá nghề nghiệp' },
                 { to: '/tu-vi', label: 'Lớp Tử Vi' },
+                { to: '/dung-thu', label: 'Dùng thử nhanh' },
                 { to: '/recruiter/search', label: 'Tìm ứng viên' },
                 { to: '/recruiter/compatibility', label: 'Mức tương hợp' },
               ]}

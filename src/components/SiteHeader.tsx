@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/viec-lam', label: 'Việc làm' },
   { to: '/candidate/careers', label: 'Nghề nghiệp' },
   { to: '/tu-vi', label: 'Tử Vi' },
+  { to: '/dung-thu', label: 'Dùng thử' },
   { to: '/candidate/profile', label: 'Hồ sơ' },
   { to: '/recruiter', label: 'Nhà tuyển dụng' },
   { to: '/about', label: 'Về VHuman' },

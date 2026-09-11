@@ -22,12 +22,13 @@ import { Button, ButtonLink } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SkillTag } from '@/components/ui/SkillTag'
 import { ProfileCard } from '@/components/ProfileCard'
-import { PersonalBlueprint } from '@/components/PersonalBlueprint'
+import { CareerBlueprint } from '@/components/CareerBlueprint'
+import { CareerFitCard } from '@/components/CareerFitCard'
+import { useTuViProfile, useCareerFits } from '@/hooks/useTuViProfile'
 import { buildProfileExport, downloadProfileExport } from '@/utils/exportProfile'
-import { CareerCard } from '@/components/CareerCard'
 import { ResetDemoButton } from '@/components/ResetDemoButton'
 import { useDemoSession } from '@/hooks/demoSessionContext'
-import { matchingEngine } from '@/services/matching'
+import { matchingEngine, matchingConfig } from '@/services/matching'
 import { formatPeriod, formatYears } from '@/utils/format'
 
 export function CandidateDashboardPage() {
@@ -35,6 +36,9 @@ export function CandidateDashboardPage() {
   const navigate = useNavigate()
 
   const [mode, setMode] = useState<'evidence' | 'destiny'>('evidence')
+
+  const tuvi = useTuViProfile(candidate)
+  const careerFits = useCareerFits(candidate, tuvi, 6)
 
   const recommendations = useMemo(
     () => (candidate ? matchingEngine.recommendCareers(candidate, 5) : []),
@@ -175,7 +179,7 @@ export function CandidateDashboardPage() {
         </Card>
       ) : null}
 
-      {mode === 'destiny' && profile ? <PersonalBlueprint profile={profile} /> : null}
+      {mode === 'destiny' && tuvi ? <CareerBlueprint profile={tuvi} /> : null}
 
       {/* Personal profile */}
       {mode === 'evidence' && profile ? <ProfileCard profile={profile} /> : null}
@@ -208,7 +212,9 @@ export function CandidateDashboardPage() {
           <div>
             <h2 className="text-xl font-bold text-ink">Những hướng nghề nghiệp phù hợp với bạn</h2>
             <p className="mt-1 text-sm text-ink-muted">
-              Xếp hạng theo mức độ phù hợp tổng thể giữa kỹ năng, kinh nghiệm và hồ sơ cá nhân.
+              Ba lớp tính riêng rồi cộng theo trọng số: phản chiếu từ lá số {Math.round(matchingConfig.careerFit.reflection * 100)}%,
+              bằng chứng thực tế {Math.round(matchingConfig.careerFit.evidence * 100)}%,
+              mong muốn của bạn {Math.round(matchingConfig.careerFit.intent * 100)}%.
             </p>
           </div>
           <Link
@@ -221,12 +227,8 @@ export function CandidateDashboardPage() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {recommendations.map((recommendation, index) => (
-            <CareerCard
-              key={recommendation.career.id}
-              recommendation={recommendation}
-              rank={index + 1}
-            />
+          {careerFits.map((fit, index) => (
+            <CareerFitCard key={fit.career.id} fit={fit} rank={index + 1} />
           ))}
         </div>
       </div>

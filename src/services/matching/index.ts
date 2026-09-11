@@ -1,3 +1,6 @@
 export { matchingEngine, matchingConfig } from './MatchingEngine'
 export type { MatchingConfig, MatchingEngineApi } from './types'
 export { matchCandidateToJob, rankJobsForCandidate, rankCandidatesForJob } from './jobMatching'
+export { calculateCareerFit, SALARY_MULTIPLIER } from './careerFit'
+export type { CareerFitResult } from './careerFit'
+export { vectorForCareer, vectorMatch, TRAIT_KEYS } from './careerVectors'

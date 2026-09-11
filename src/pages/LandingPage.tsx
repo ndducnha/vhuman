@@ -78,8 +78,8 @@ function Hero({ onEnter }: { onEnter: (role: DemoRole) => void }) {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink to="/candidate/onboarding" variant="crimson" size="lg">
-                Tải CV &amp; xem gợi ý
+              <ButtonLink to="/dung-thu" variant="crimson" size="lg">
+                Thử ngay trong một phút
                 <ArrowRight className="h-4 w-4" />
               </ButtonLink>
               <ButtonLink to="/recruiter/search" variant="secondary" size="lg">
@@ -87,6 +87,13 @@ function Hero({ onEnter }: { onEnter: (role: DemoRole) => void }) {
                 Tìm ứng viên
               </ButtonLink>
             </div>
+            <p className="mt-3 text-sm text-ink-soft">
+              Dán CV, nhập ngày giờ sinh, ra ngay nghề phù hợp và cách làm việc hợp với bạn. Không
+              cần đăng ký.{' '}
+              <Link to="/candidate/onboarding" className="font-medium text-primary hover:underline">
+                Hoặc tạo hồ sơ đầy đủ
+              </Link>
+            </p>
 
             <div className="mt-10 rounded-xl border border-line bg-surface-muted p-4">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-muted">

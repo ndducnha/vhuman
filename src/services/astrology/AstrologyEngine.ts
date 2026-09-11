@@ -10,9 +10,19 @@
  * ────────────────────────────────────────────────────────────────────
  */
 import { MockAstrologyEngine } from './MockAstrologyEngine'
+import { TuViCareerEngine } from './TuViCareerEngine'
 import type { AstrologyEngine } from './types'
+import type { AstrologyCareerProvider } from '@/types/tuvi'
 
 export const astrologyEngine: AstrologyEngine = new MockAstrologyEngine()
+
+/**
+ * Engine phân loại nghề nghiệp từ lá số.
+ *
+ * Đây là phần nặng ký của lớp Tử Vi: nó biến lá số thành vector đặc tính máy
+ * đọc được. Thay engine thật vào chỉ cần đổi đúng dòng dưới đây.
+ */
+export const tuviCareerEngine: AstrologyCareerProvider = new TuViCareerEngine()
 
 export type { AstrologyEngine } from './types'
 export { MockAstrologyEngine } from './MockAstrologyEngine'

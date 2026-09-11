@@ -36,6 +36,8 @@ export interface MatchingConfig {
   minimumResultScore: number
   /** Points added when a career's field matches the star archetype's affinity. */
   starAffinityBonus: number
+  /** Ba lớp của công thức gợi ý nghề nghiệp, cộng lại bằng 1. */
+  careerFit: { reflection: number; evidence: number; intent: number }
 }
 
 export interface MatchingEngineApi {

@@ -9,6 +9,7 @@ import { LandingPage } from '@/pages/LandingPage'
 import { ChooseRolePage } from '@/pages/ChooseRolePage'
 import { AboutPage } from '@/pages/AboutPage'
 import { AstrologyPage } from '@/pages/AstrologyPage'
+import { QuickDemoPage } from '@/pages/QuickDemoPage'
 import { JobsPage } from '@/pages/JobsPage'
 import { JobDetailPage } from '@/pages/JobDetailPage'
 import { MyApplicationsPage } from '@/pages/MyApplicationsPage'
@@ -45,6 +46,7 @@ export function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/choose-role" element={<ChooseRolePage />} />
             <Route path="/tu-vi" element={<AstrologyPage />} />
+            <Route path="/dung-thu" element={<QuickDemoPage />} />
             <Route path="/about" element={<AboutPage />} />
           </Route>
 
