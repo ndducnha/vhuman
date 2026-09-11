@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DemoSessionProvider } from '@/hooks/useDemoSession'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { PublicLayout } from '@/layouts/PublicLayout'
 import { CandidateLayout } from '@/layouts/CandidateLayout'
 import { RecruiterLayout } from '@/layouts/RecruiterLayout'
@@ -34,8 +35,9 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
  */
 export function App() {
   return (
-    <DemoSessionProvider>
-      <HashRouter>
+    <ErrorBoundary>
+      <DemoSessionProvider>
+        <HashRouter>
         <ScrollToTop />
         <Routes>
           {/* Public */}
@@ -77,8 +79,9 @@ export function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
-      </HashRouter>
-    </DemoSessionProvider>
+        </HashRouter>
+      </DemoSessionProvider>
+    </ErrorBoundary>
   )
 }
 

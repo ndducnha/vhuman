@@ -15,6 +15,9 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    // Mặc định của Vite chỉ nhắm trình duyệt khá mới. Hạ xuống để chạy được
+    // trên máy và điện thoại đời cũ hơn, đổi lại bundle nhỉnh hơn chút.
+    target: ['es2019', 'chrome79', 'safari13', 'firefox72', 'edge79'],
     sourcemap: false,
     chunkSizeWarningLimit: 1200,
     rollupOptions: {

@@ -176,7 +176,23 @@ export interface Career {
   /** Short, non-deterministic phrasing used in the "why this fits" section. */
   environment: string
   demandNote: string
+
+  /**
+   * Khoảng lương tham khảo ở cấp "Chuyên viên", đơn vị triệu VND mỗi tháng.
+   * Các cấp khác suy ra từ đây bằng hệ số chuẩn, xem `salaryForLevel`.
+   */
+  salaryBase: [number, number]
+  /** Lộ trình thăng tiến điển hình, từ mới vào nghề tới cấp cao nhất. */
+  progression: string[]
+  /** Học vấn thường được yêu cầu. */
+  education: string
+  /** Id các nhóm nghề gần, dùng cho gợi ý "có thể bạn cũng hợp". */
+  relatedCareers: string[]
+  /** Mức nhu cầu trên thị trường. */
+  outlook: CareerOutlook
 }
+
+export type CareerOutlook = 'high' | 'steady' | 'niche'
 
 /* ------------------------------------------------------------------ */
 /* Lớp phản chiếu cá nhân (astrology)                                */
