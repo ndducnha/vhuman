@@ -1,9 +1,12 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Candidate, DemoRole, ManagerProfile } from '@/types'
+import type {
+  Application, ApplicationStage, Candidate, DemoRole,
+  ManagerProfile, ShortlistEntry, ShortlistStage,
+} from '@/types'
 import { storageService } from '@/services/storage'
 import { SEED_MANAGERS } from '@/data/recruiters'
-import { DEMO_CANDIDATE, DEMO_SAVED_CANDIDATE_IDS } from '@/data/demoProfile'
+import { DEMO_APPLICATIONS, DEMO_CANDIDATE, DEMO_SAVED_CANDIDATE_IDS } from '@/data/demoProfile'
 import { DemoSessionContext, type DemoSessionValue } from '@/hooks/demoSessionContext'
 
 /**
@@ -22,7 +25,12 @@ import { DemoSessionContext, type DemoSessionValue } from '@/hooks/demoSessionCo
 /** Writes the whole demo dataset to storage. Safe to call repeatedly. */
 function plantDemoData(): void {
   storageService.saveCandidate(DEMO_CANDIDATE)
-  DEMO_SAVED_CANDIDATE_IDS.forEach((id) => storageService.saveCandidateForRecruiter(id))
+  DEMO_SAVED_CANDIDATE_IDS.forEach((id, index) => {
+    storageService.saveCandidateForRecruiter(id)
+    // Trải sẵn vài trạng thái để bảng theo dõi không trống trơn khi demo.
+    storageService.setShortlistStage(id, (['contacted', 'interview', 'saved'] as const)[index] ?? 'saved')
+  })
+  DEMO_APPLICATIONS.forEach((app) => storageService.saveApplication(app))
   SEED_MANAGERS.forEach((profile) => storageService.saveManagerProfile(profile))
   storageService.setActiveManagerId(SEED_MANAGERS[0]?.id ?? null)
   storageService.markSeeded()
@@ -40,6 +48,8 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
   const [role, setRoleState] = useState<DemoRole | null>(() => storageService.loadRole())
   const [candidate, setCandidateState] = useState<Candidate | null>(() => storageService.loadCandidate())
   const [savedIds, setSavedIds] = useState<string[]>(() => storageService.loadSavedCandidateIds())
+  const [shortlist, setShortlist] = useState<ShortlistEntry[]>(() => storageService.loadShortlist())
+  const [applications, setApplications] = useState<Application[]>(() => storageService.loadApplications())
   const [managers, setManagers] = useState<ManagerProfile[]>(() => {
     const stored = storageService.loadManagerProfiles()
     return stored.length > 0 ? stored : SEED_MANAGERS
@@ -86,12 +96,61 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const toggleSaved = useCallback((candidateId: string) => {
-    setSavedIds((current) =>
-      current.includes(candidateId)
-        ? storageService.removeSavedCandidate(candidateId)
-        : storageService.saveCandidateForRecruiter(candidateId),
+    setSavedIds((current) => {
+      if (current.includes(candidateId)) {
+        setShortlist(storageService.removeShortlist(candidateId))
+        return storageService.removeSavedCandidate(candidateId)
+      }
+      setShortlist(storageService.setShortlistStage(candidateId, 'saved'))
+      return storageService.saveCandidateForRecruiter(candidateId)
+    })
+  }, [])
+
+  const shortlistOf = useCallback(
+    (candidateId: string) => shortlist.find((e) => e.candidateId === candidateId),
+    [shortlist],
+  )
+
+  const setShortlistStage = useCallback((candidateId: string, stage: ShortlistStage) => {
+    setShortlist(storageService.setShortlistStage(candidateId, stage))
+    setSavedIds(storageService.saveCandidateForRecruiter(candidateId))
+  }, [])
+
+  const setShortlistNote = useCallback((candidateId: string, note: string) => {
+    setShortlist(storageService.setShortlistNote(candidateId, note))
+  }, [])
+
+  const applicationFor = useCallback(
+    (jobId: string) => applications.find((a) => a.jobId === jobId),
+    [applications],
+  )
+
+  const applyToJob = useCallback((jobId: string, coverNote: string) => {
+    const now = new Date().toISOString()
+    setApplications(
+      storageService.saveApplication({
+        id: `app-${jobId}-${Date.now()}`,
+        jobId,
+        candidateId: 'me',
+        stage: 'applied',
+        appliedAt: now,
+        coverNote,
+        recruiterNote: '',
+        updatedAt: now,
+      }),
     )
   }, [])
+
+  const withdrawApplication = useCallback((id: string) => {
+    setApplications(storageService.withdrawApplication(id))
+  }, [])
+
+  const setApplicationStage = useCallback(
+    (id: string, stage: ApplicationStage, note?: string) => {
+      setApplications(storageService.updateApplicationStage(id, stage, note))
+    },
+    [],
+  )
 
   const isSaved = useCallback(
     (candidateId: string) => savedIds.includes(candidateId),
@@ -120,6 +179,8 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
     setRoleState(null)
     setCandidateState(DEMO_CANDIDATE)
     setSavedIds(storageService.loadSavedCandidateIds())
+    setShortlist(storageService.loadShortlist())
+    setApplications(storageService.loadApplications())
     setManagers(storageService.loadManagerProfiles())
     setActiveManagerIdState(storageService.getActiveManagerId())
   }, [])
@@ -137,6 +198,15 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
       savedIds,
       toggleSaved,
       isSaved,
+      shortlist,
+      shortlistOf,
+      setShortlistStage,
+      setShortlistNote,
+      applications,
+      applicationFor,
+      applyToJob,
+      withdrawApplication,
+      setApplicationStage,
       managers,
       activeManagerId,
       activeManager: managers.find((m) => m.id === activeManagerId) ?? managers[0] ?? null,
@@ -156,6 +226,15 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
       savedIds,
       toggleSaved,
       isSaved,
+      shortlist,
+      shortlistOf,
+      setShortlistStage,
+      setShortlistNote,
+      applications,
+      applicationFor,
+      applyToJob,
+      withdrawApplication,
+      setApplicationStage,
       managers,
       activeManagerId,
       addManager,

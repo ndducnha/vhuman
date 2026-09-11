@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Download,
   Info,
+  Route,
   ScrollText,
   Lightbulb,
   MapPin,
@@ -79,9 +80,17 @@ export function CandidateDashboardPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <ButtonLink to="/candidate/careers" variant="primary" size="sm">
+            <ButtonLink to="/candidate/lo-trinh" variant="primary" size="sm">
+              <Route className="h-4 w-4" />
+              Lộ trình của tôi
+            </ButtonLink>
+            <ButtonLink to="/viec-lam" variant="secondary" size="sm">
+              <Briefcase className="h-4 w-4" />
+              Việc làm phù hợp
+            </ButtonLink>
+            <ButtonLink to="/candidate/careers" variant="secondary" size="sm">
               <Target className="h-4 w-4" />
-              Xem tất cả nghề nghiệp
+              Nghề nghiệp
             </ButtonLink>
             <ButtonLink to="/candidate/onboarding" variant="secondary" size="sm">
               Chỉnh sửa hồ sơ

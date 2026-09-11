@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Briefcase, MapPin, Search, Users } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardBody } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
 import { SkillTag } from '@/components/ui/SkillTag'
 import { JOB_POSTINGS } from '@/data/jobs'
 import { skillName } from '@/data/skills'
@@ -13,7 +13,7 @@ import { matchingEngine } from '@/services/matching'
 import { EMPTY_FILTERS } from '@/utils/filters'
 import { SENIORITY_LABEL, WORK_MODE_LABEL, formatSalary, formatDateVi } from '@/utils/format'
 import { cn } from '@/utils/cn'
-import type { JobPosting } from '@/data/jobs'
+import type { JobPosting } from '@/types'
 
 const STATUS_LABEL: Record<JobPosting['status'], string> = {
   open: 'Đang tuyển',
@@ -81,7 +81,12 @@ export function RecruiterJobsPage() {
             <CardBody className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-base font-semibold text-ink">{job.title}</h3>
+                  <Link
+                    to={`/recruiter/jobs/${job.id}`}
+                    className="text-base font-semibold text-ink transition-colors hover:text-accent-700"
+                  >
+                    {job.title}
+                  </Link>
                   <Badge tone={job.status === 'open' ? 'success' : job.status === 'draft' ? 'warn' : 'neutral'}>
                     {STATUS_LABEL[job.status]}
                   </Badge>
@@ -118,18 +123,23 @@ export function RecruiterJobsPage() {
                   <p className="mt-0.5 text-xs text-ink-muted">ứng viên phù hợp</p>
                 </div>
 
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() =>
-                    navigate('/recruiter/search', {
-                      state: { skills: job.skills, seniority: [job.seniority] },
-                    })
-                  }
-                >
-                  <Search className="h-4 w-4" />
-                  Xem ứng viên
-                </Button>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <ButtonLink to={`/recruiter/jobs/${job.id}`} variant="primary" size="sm">
+                    Mở tin
+                  </ButtonLink>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() =>
+                      navigate('/recruiter/search', {
+                        state: { skills: job.skills, seniority: [job.seniority] },
+                      })
+                    }
+                  >
+                    <Search className="h-4 w-4" />
+                    Tìm ứng viên
+                  </Button>
+                </div>
               </div>
             </CardBody>
           </Card>

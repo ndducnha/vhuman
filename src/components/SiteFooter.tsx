@@ -20,6 +20,8 @@ export function SiteFooter() {
               title="Sản phẩm"
               links={[
                 { to: '/candidate/onboarding', label: 'Tạo hồ sơ' },
+                { to: '/viec-lam', label: 'Việc làm' },
+                { to: '/candidate/lo-trinh', label: 'Lộ trình' },
                 { to: '/candidate/careers', label: 'Khám phá nghề nghiệp' },
                 { to: '/tu-vi', label: 'Lớp Tử Vi' },
                 { to: '/recruiter/search', label: 'Tìm ứng viên' },
@@ -38,6 +40,7 @@ export function SiteFooter() {
               links={[
                 { to: '/recruiter', label: 'Tổng quan' },
                 { to: '/recruiter/saved', label: 'Ứng viên đã lưu' },
+                { to: '/recruiter/applications', label: 'Đơn ứng tuyển' },
                 { to: '/recruiter/settings', label: 'Cài đặt' },
               ]}
             />

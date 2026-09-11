@@ -1,9 +1,14 @@
 import type {
+  Application,
+  ApplicationStage,
   Candidate,
   CandidateDraft,
   DemoRole,
   ManagerProfile,
+  Milestone,
   Recruiter,
+  ShortlistEntry,
+  ShortlistStage,
 } from '@/types'
 
 /**
@@ -27,6 +32,9 @@ const KEYS = {
   /** Set once the demo dataset has been planted, so it is not re-planted
    *  every load after the visitor deliberately cleared it. */
   seeded: `${PREFIX}seeded`,
+  applications: `${PREFIX}applications`,
+  shortlist: `${PREFIX}shortlist`,
+  milestones: `${PREFIX}milestones`,
 } as const
 
 function read<T>(key: string, fallback: T): T {
@@ -110,6 +118,94 @@ class StorageService {
 
   isCandidateSaved(candidateId: string): boolean {
     return this.loadSavedCandidateIds().includes(candidateId)
+  }
+
+  /* ── Ứng tuyển ─────────────────────────────────────────────────── */
+
+  loadApplications(): Application[] {
+    return read<Application[]>(KEYS.applications, [])
+  }
+
+  saveApplication(application: Application): Application[] {
+    const current = this.loadApplications()
+    const index = current.findIndex((a) => a.id === application.id)
+    const next =
+      index >= 0
+        ? current.map((a) => (a.id === application.id ? application : a))
+        : [application, ...current]
+    write(KEYS.applications, next)
+    return next
+  }
+
+  updateApplicationStage(id: string, stage: ApplicationStage, recruiterNote?: string): Application[] {
+    const next = this.loadApplications().map((a) =>
+      a.id === id
+        ? { ...a, stage, recruiterNote: recruiterNote ?? a.recruiterNote, updatedAt: new Date().toISOString() }
+        : a,
+    )
+    write(KEYS.applications, next)
+    return next
+  }
+
+  withdrawApplication(id: string): Application[] {
+    const next = this.loadApplications().filter((a) => a.id !== id)
+    write(KEYS.applications, next)
+    return next
+  }
+
+  /* ── Shortlist có trạng thái ───────────────────────────────────── */
+
+  loadShortlist(): ShortlistEntry[] {
+    return read<ShortlistEntry[]>(KEYS.shortlist, [])
+  }
+
+  upsertShortlist(entry: ShortlistEntry): ShortlistEntry[] {
+    const current = this.loadShortlist()
+    const index = current.findIndex((e) => e.candidateId === entry.candidateId)
+    const next =
+      index >= 0
+        ? current.map((e) => (e.candidateId === entry.candidateId ? entry : e))
+        : [entry, ...current]
+    write(KEYS.shortlist, next)
+    return next
+  }
+
+  setShortlistStage(candidateId: string, stage: ShortlistStage): ShortlistEntry[] {
+    const now = new Date().toISOString()
+    const current = this.loadShortlist()
+    const found = current.find((e) => e.candidateId === candidateId)
+    return this.upsertShortlist(
+      found
+        ? { ...found, stage, updatedAt: now }
+        : { candidateId, stage, note: '', savedAt: now, updatedAt: now },
+    )
+  }
+
+  setShortlistNote(candidateId: string, note: string): ShortlistEntry[] {
+    const now = new Date().toISOString()
+    const current = this.loadShortlist()
+    const found = current.find((e) => e.candidateId === candidateId)
+    return this.upsertShortlist(
+      found
+        ? { ...found, note, updatedAt: now }
+        : { candidateId, stage: 'saved', note, savedAt: now, updatedAt: now },
+    )
+  }
+
+  removeShortlist(candidateId: string): ShortlistEntry[] {
+    const next = this.loadShortlist().filter((e) => e.candidateId !== candidateId)
+    write(KEYS.shortlist, next)
+    return next
+  }
+
+  /* ── Lộ trình ──────────────────────────────────────────────────── */
+
+  loadMilestones(): Milestone[] {
+    return read<Milestone[]>(KEYS.milestones, [])
+  }
+
+  saveMilestones(milestones: Milestone[]): void {
+    write(KEYS.milestones, milestones)
   }
 
   /* ── Recruiter identity ────────────────────────────────────────── */

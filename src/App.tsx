@@ -8,6 +8,12 @@ import { LandingPage } from '@/pages/LandingPage'
 import { ChooseRolePage } from '@/pages/ChooseRolePage'
 import { AboutPage } from '@/pages/AboutPage'
 import { AstrologyPage } from '@/pages/AstrologyPage'
+import { JobsPage } from '@/pages/JobsPage'
+import { JobDetailPage } from '@/pages/JobDetailPage'
+import { MyApplicationsPage } from '@/pages/MyApplicationsPage'
+import { RoadmapPage } from '@/pages/RoadmapPage'
+import { RecruiterJobDetailPage } from '@/pages/RecruiterJobDetailPage'
+import { RecruiterApplicationsPage } from '@/pages/RecruiterApplicationsPage'
 import { OnboardingPage } from '@/pages/OnboardingPage'
 import { CandidateDashboardPage } from '@/pages/CandidateDashboardPage'
 import { CareersPage } from '@/pages/CareersPage'
@@ -46,6 +52,10 @@ export function App() {
             <Route path="/candidate/profile" element={<CandidateDashboardPage />} />
             <Route path="/candidate/careers" element={<CareersPage />} />
             <Route path="/candidate/careers/:id" element={<CareerDetailPage />} />
+            <Route path="/candidate/lo-trinh" element={<RoadmapPage />} />
+            <Route path="/candidate/don-ung-tuyen" element={<MyApplicationsPage />} />
+            <Route path="/viec-lam" element={<JobsPage />} />
+            <Route path="/viec-lam/:id" element={<JobDetailPage />} />
             <Route path="/candidate" element={<Navigate to="/candidate/profile" replace />} />
           </Route>
 
@@ -57,6 +67,8 @@ export function App() {
             <Route path="/recruiter/candidate/:id" element={<CandidateDetailPage />} />
             <Route path="/recruiter/saved" element={<SavedCandidatesPage />} />
             <Route path="/recruiter/jobs" element={<RecruiterJobsPage />} />
+            <Route path="/recruiter/jobs/:id" element={<RecruiterJobDetailPage />} />
+            <Route path="/recruiter/applications" element={<RecruiterApplicationsPage />} />
             <Route path="/recruiter/company" element={<RecruiterCompanyPage />} />
             <Route path="/recruiter/settings" element={<RecruiterSettingsPage />} />
           </Route>

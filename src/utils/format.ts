@@ -1,5 +1,8 @@
 import type {
+  ApplicationStage,
   Gender,
+  JobStatus,
+  ShortlistStage,
   ManagerRole,
   SeniorityLevel,
   SkillCategory,
@@ -80,6 +83,37 @@ export const WORK_MODE_LABEL: Record<WorkMode, string> = {
   onsite: 'Tại văn phòng',
   hybrid: 'Kết hợp',
   remote: 'Từ xa',
+}
+
+export const APPLICATION_STAGE_LABEL: Record<ApplicationStage, string> = {
+  applied: 'Đã nộp',
+  reviewing: 'Đang xem xét',
+  interview: 'Phỏng vấn',
+  offer: 'Đã đề nghị',
+  hired: 'Đã nhận việc',
+  rejected: 'Chưa phù hợp',
+}
+
+export const APPLICATION_STAGE_ORDER: ApplicationStage[] = [
+  'applied', 'reviewing', 'interview', 'offer', 'hired', 'rejected',
+]
+
+export const SHORTLIST_STAGE_LABEL: Record<ShortlistStage, string> = {
+  saved: 'Đã lưu',
+  contacted: 'Đã liên hệ',
+  interview: 'Phỏng vấn',
+  offer: 'Đã đề nghị',
+  passed: 'Bỏ qua',
+}
+
+export const SHORTLIST_STAGE_ORDER: ShortlistStage[] = [
+  'saved', 'contacted', 'interview', 'offer', 'passed',
+]
+
+export const JOB_STATUS_LABEL: Record<JobStatus, string> = {
+  open: 'Đang tuyển',
+  draft: 'Bản nháp',
+  closed: 'Đã đóng',
 }
 
 export const GENDER_LABEL: Record<Gender, string> = {

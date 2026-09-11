@@ -1,4 +1,4 @@
-import type { Candidate, CandidateSkill } from '@/types'
+import type { Application, Candidate, CandidateSkill } from '@/types'
 import { SKILL_BY_ID } from '@/data/skills'
 import { astrologyEngine } from '@/services/astrology'
 
@@ -121,3 +121,31 @@ export const DEMO_CANDIDATE: Candidate = {
 
 /** Candidates the demo recruiter already has in their shortlist. */
 export const DEMO_SAVED_CANDIDATE_IDS = ['c-001', 'c-006', 'c-021']
+
+/**
+ * Đơn ứng tuyển nạp sẵn, để cả hai phía đều có dữ liệu ngay khi mở lần đầu:
+ * ứng viên thấy đơn của mình, nhà tuyển dụng thấy có người nộp.
+ */
+export const DEMO_APPLICATIONS: Application[] = [
+  {
+    id: 'app-j-004-seed',
+    jobId: 'j-004',
+    candidateId: 'me',
+    stage: 'reviewing',
+    appliedAt: '2026-09-04T09:12:00.000Z',
+    coverNote:
+      'Tôi có 6 năm làm phân tích dữ liệu, thành thạo SQL và Python, đang muốn chuyển sâu hơn sang mảng kỹ thuật dữ liệu.',
+    recruiterNote: 'Hồ sơ khớp tốt phần SQL. Cần xác nhận kinh nghiệm pipeline.',
+    updatedAt: '2026-09-06T14:30:00.000Z',
+  },
+  {
+    id: 'app-j-001-seed',
+    jobId: 'j-001',
+    candidateId: 'me',
+    stage: 'applied',
+    appliedAt: '2026-09-07T16:40:00.000Z',
+    coverNote: 'Quan tâm tới mảng đưa mô hình vào vận hành thật.',
+    recruiterNote: '',
+    updatedAt: '2026-09-07T16:40:00.000Z',
+  },
+]

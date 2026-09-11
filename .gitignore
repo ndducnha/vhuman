@@ -20,6 +20,10 @@ yarn-error.log*
 # Word lock files
 ~$*
 
+# Chờ cấp scope `workflow` cho token gh mới đẩy được file này lên.
+# Chạy `gh auth refresh -s workflow` rồi xoá dòng dưới đây.
+.github/workflows/deploy.yml
+
 # Tài liệu kinh doanh nội bộ.
 # Repo này đang ở chế độ public, nên báo cáo pitch và tài liệu nghiên cứu
 # chiến lược không được đưa lên. Nếu muốn công khai, xoá hai dòng dưới đây.

@@ -10,9 +10,10 @@ import { useDemoSession } from '@/hooks/demoSessionContext'
 
 // Kept short so five items fit on one line at 1280px without wrapping.
 const NAV_ITEMS = [
+  { to: '/viec-lam', label: 'Việc làm' },
   { to: '/candidate/careers', label: 'Nghề nghiệp' },
   { to: '/tu-vi', label: 'Tử Vi' },
-  { to: '/candidate/profile', label: 'Ứng viên' },
+  { to: '/candidate/profile', label: 'Hồ sơ' },
   { to: '/recruiter', label: 'Nhà tuyển dụng' },
   { to: '/about', label: 'Về VHuman' },
 ]

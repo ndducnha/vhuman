@@ -1,5 +1,8 @@
 import { createContext, useContext } from 'react'
-import type { Candidate, DemoRole, ManagerProfile } from '@/types'
+import type {
+  Application, ApplicationStage, Candidate, DemoRole,
+  ManagerProfile, ShortlistEntry, ShortlistStage,
+} from '@/types'
 
 export interface DemoSessionValue {
   role: DemoRole | null
@@ -18,6 +21,18 @@ export interface DemoSessionValue {
   savedIds: string[]
   toggleSaved: (candidateId: string) => void
   isSaved: (candidateId: string) => boolean
+
+  /** Shortlist với trạng thái theo dõi, thay cho danh sách id đơn thuần. */
+  shortlist: ShortlistEntry[]
+  shortlistOf: (candidateId: string) => ShortlistEntry | undefined
+  setShortlistStage: (candidateId: string, stage: ShortlistStage) => void
+  setShortlistNote: (candidateId: string, note: string) => void
+
+  applications: Application[]
+  applicationFor: (jobId: string) => Application | undefined
+  applyToJob: (jobId: string, coverNote: string) => void
+  withdrawApplication: (id: string) => void
+  setApplicationStage: (id: string, stage: ApplicationStage, note?: string) => void
 
   managers: ManagerProfile[]
   activeManagerId: string | null

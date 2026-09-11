@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   Bookmark,
+  Inbox,
   Building2,
   LayoutDashboard,
   Menu,
@@ -25,6 +26,7 @@ const NAV = [
   { to: '/recruiter/search', label: 'Tìm ứng viên', icon: Search },
   { to: '/recruiter/compatibility', label: 'Hồ sơ tương hợp', icon: Sparkles },
   { to: '/recruiter/saved', label: 'Ứng viên đã lưu', icon: Bookmark },
+  { to: '/recruiter/applications', label: 'Đơn ứng tuyển', icon: Inbox },
   { to: '/recruiter/jobs', label: 'Tin tuyển dụng', icon: Users },
   { to: '/recruiter/company', label: 'Công ty', icon: Building2 },
   { to: '/recruiter/settings', label: 'Cài đặt', icon: Settings },

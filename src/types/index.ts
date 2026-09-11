@@ -336,6 +336,99 @@ export interface CandidateSearchFilters {
 export type SortKey = 'overall' | 'skills' | 'compatibility' | 'experience'
 
 /* ------------------------------------------------------------------ */
+/* Tin tuyển dụng & ứng tuyển                                           */
+/* ------------------------------------------------------------------ */
+
+export type JobStatus = 'open' | 'draft' | 'closed'
+
+export interface JobPosting {
+  id: string
+  title: string
+  /** Career category this posting belongs to, from the VN taxonomy. */
+  careerId: string
+  field: CareerField
+  company: string
+  seniority: SeniorityLevel
+  location: string
+  workMode: WorkMode
+  salaryMin: number
+  salaryMax: number
+  /** Skill ids the posting asks for, most important first. */
+  skills: string[]
+  /** Nice-to-have skill ids. */
+  bonusSkills: string[]
+  openings: number
+  status: JobStatus
+  postedAt: string
+  summary: string
+  responsibilities: string[]
+  requirements: string[]
+  benefits: string[]
+  /** Trait shape the hiring manager is looking for, when they specified one. */
+  desiredTraits?: Partial<TraitScores>
+}
+
+/** How well a candidate fits a posting, mirrored on both sides of the product. */
+export interface JobMatchResult {
+  job: JobPosting
+  overall: number
+  skillMatch: number
+  experienceMatch: number
+  profileMatch: number | null
+  band: ScoreBand
+  matchedSkills: string[]
+  missingSkills: string[]
+}
+
+export type ApplicationStage =
+  | 'applied'
+  | 'reviewing'
+  | 'interview'
+  | 'offer'
+  | 'hired'
+  | 'rejected'
+
+export interface Application {
+  id: string
+  jobId: string
+  candidateId: string
+  stage: ApplicationStage
+  appliedAt: string
+  /** Free-text note the candidate attached when applying. */
+  coverNote: string
+  /** Recruiter-side note, never shown to the candidate in this demo. */
+  recruiterNote: string
+  updatedAt: string
+}
+
+/** Pipeline state a recruiter keeps against a saved candidate. */
+export type ShortlistStage = 'saved' | 'contacted' | 'interview' | 'offer' | 'passed'
+
+export interface ShortlistEntry {
+  candidateId: string
+  stage: ShortlistStage
+  note: string
+  savedAt: string
+  updatedAt: string
+}
+
+/* ------------------------------------------------------------------ */
+/* Milestone roadmap                                                    */
+/* ------------------------------------------------------------------ */
+
+export type MilestoneKind = 'skill' | 'cycle' | 'career' | 'application'
+
+export interface Milestone {
+  id: string
+  kind: MilestoneKind
+  title: string
+  detail: string
+  /** Months from now when this is suggested to happen. */
+  monthOffset: number
+  done: boolean
+}
+
+/* ------------------------------------------------------------------ */
 /* Demo session                                                         */
 /* ------------------------------------------------------------------ */
 
