@@ -37,12 +37,33 @@
         }
       })()
     </script>
-    <script type="module" crossorigin src="./assets/index-Di0ZPEAq.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/react-Ew7Q3SgH.js">
-    <link rel="modulepreload" crossorigin href="./assets/charts--I8Zu16A.js">
+    <script type="module" crossorigin src="./assets/index-uIu0EIOv.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/react-QTc2cNL4.js">
+    <link rel="modulepreload" crossorigin href="./assets/charts-BF1Hj_Xa.js">
     <link rel="stylesheet" crossorigin href="./assets/index-DFlZZaG4.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!--
+        Nội dung dự phòng. React thay thế toàn bộ khi khởi động được.
+        Nếu trình duyệt không chạy được bundle (quá cũ, bị chặn script, mạng hỏng)
+        thì phần này ở lại, thay vì để người dùng nhìn một trang trắng.
+      -->
+      <div id="boot-fallback" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBF0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
+        <div style="max-width:560px;width:100%;background:#FAF5E9;border:1px solid #E4D9C4;border-radius:14px;padding:28px">
+          <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#186848">VHuman</p>
+          <h1 style="margin:12px 0 0;font-size:22px;color:#1C1917">Đang tải ứng dụng</h1>
+          <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:#615041">
+            Nếu dòng này ở lại quá vài giây, trình duyệt của bạn chưa chạy được ứng dụng.
+            Thử tải lại bằng tổ hợp phím bỏ qua bộ nhớ đệm, hoặc mở bằng Chrome, Safari, Edge bản mới.
+          </p>
+          <noscript>
+            <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:#9D2933">
+              Trình duyệt đang tắt JavaScript. VHuman cần JavaScript để chạy.
+            </p>
+          </noscript>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
