@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════
+   Design tokens
+   Values are "R G B" channel triplets so Tailwind opacity modifiers
+   (bg-primary/10) work. Light is the default; dark overrides below.
+   ══════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+
+    /* Surfaces: warm cream, no pure white page */
+    --bg:            255 251 240;   /* #FFFBF0 */
+    --card:          250 245 233;   /* #FAF5E9 */
+    --raised:        255 255 255;
+    --muted:         243 236 220;   /* #F3ECDC */
+
+    /* Text: warm near-black, not blue-grey */
+    --fg:             28  25  23;   /* #1C1917 */
+    --fg-soft:        68  62  55;
+    --fg-muted:       97  88  78;
+    --fg-faint:      134 123 110;
+
+    /* Lines */
+    --border:        228 217 196;
+    --border-soft:   240 232 215;
+    --border-strong: 206 192 166;
+
+    /* Primary: taken straight from the logo mark, so brand and UI agree */
+    --primary:        24 104  72;   /* #186848 */
+    --primary-hover:  20  84  56;
+    --primary-active: 15  68  41;
+    --on-primary:    255 251 240;
+    --on-primary-muted: 224 244 233;
+
+    /* Brand band: deep green-ink, dark in both themes */
+    --brand:          20  52  40;
+    --brand-soft:     28  72  54;
+    --on-brand:      255 251 240;
+    --on-brand-muted: 166 200 180;
+
+    /* Accent scale: the logo green, used for links and quiet fills */
+    --accent-50:  236 249 241;
+    --accent-100: 215 240 226;
+    --accent-200: 169 220 194;
+    --accent-300: 111 194 155;
+    --accent-400:  63 163 119;
+    --accent-500:  36 133  92;
+    --accent-600:  24 104  72;
+    --accent-700:  20  84  56;  /* link text */
+    --accent-800:  15  68  41;
+    --accent-900:  10  51  32;
+    --on-accent:  255 251 240;
+
+    /* Crimson: reserved for display headings and the hero CTA, as in the
+       reference: sparing, never a large surface. */
+    --crimson:        157  41  51;  /* #9D2933 */
+    --crimson-hover:  132  33  42;
+    --crimson-active: 110  27  35;
+    --on-crimson:    255 251 240;
+
+    /* Gold: decorative ornaments only */
+    --gold:        234 205 118;   /* #EACD76 */
+    --gold-deep:   168 132  38;
+
+    /* Status / score bands, warmed to sit on cream */
+    --neutral-subtle: 243 236 220;  --neutral-border: 224 212 190;  --neutral-fg:  97  88  78;  --neutral-solid: 140 128 112;
+    --warning-subtle: 253 243 217;  --warning-border: 240 217 152;  --warning-fg: 146  93  12;  --warning-solid: 184 122  14;
+    --info-subtle:    226 243 233;  --info-border:    172 216 190;  --info-fg:     20  84  56;  --info-solid:     30 122  84;
+    --success-subtle: 228 243 227;  --success-border: 180 216 178;  --success-fg:  28 100  48;  --success-solid:  42 133  66;
+    --danger-subtle:  252 234 233;  --danger-border:  240 197 196;  --danger-fg:  157  41  51;  --danger-solid:  178  46  57;
+
+    /* Utility */
+    --scrim:      28  25  23;
+    --tooltip:    20  52  40;
+    --on-tooltip: 255 251 240;
+    --ring:       24 104  72;
+    --shadow:     84  66  40;
+  }
+
+  /* ── Dark theme ────────────────────────────────────────────────── */
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+
+    /* Warm dark, not blue-black: keeps the cream-and-ink character */
+    --bg:             20  17  14;   /* #14110E */
+    --card:           29  25  21;   /* #1D1915 */
+    --raised:         38  33  28;
+    --muted:          44  38  32;
+
+    --fg:            245 238 223;
+    --fg-soft:       210 199 180;
+    --fg-muted:      177 165 147;
+    --fg-faint:      145 133 117;
+
+    --border:         62  54  45;
+    --border-soft:    44  38  32;
+    --border-strong:  88  77  64;
+
+    --primary:        64 175 120;   /* lifted logo green for the dark ground */
+    --primary-hover:  84 194 138;
+    --primary-active: 48 150 100;
+    --on-primary:     10  36  24;
+    --on-primary-muted:  16  44  30;
+
+    --brand:          26  56  42;
+    --brand-soft:     38  76  58;
+    --on-brand:      245 238 223;
+    --on-brand-muted: 160 196 176;
+
+    --accent-50:  14  40  28;
+    --accent-100: 18  56  38;
+    --accent-200: 24  78  54;
+    --accent-300: 34 108  74;
+    --accent-400: 52 142  98;
+    --accent-500: 76 172 121;
+    --accent-600: 102 196 146;
+    --accent-700: 140 216 175;  /* link text on dark */
+    --accent-800: 182 233 206;
+    --accent-900: 216 245 229;
+    --on-accent:  10  34  22;
+
+    --crimson:       214 106 116;
+    --crimson-hover: 226 128 137;
+    --crimson-active:194  86  97;
+    --on-crimson:     42  12  16;
+
+    --gold:       234 205 118;
+    --gold-deep:  201 168  78;
+
+    --neutral-subtle: 44  38  32;  --neutral-border: 68  59  49;  --neutral-fg: 186 174 156;  --neutral-solid: 138 126 110;
+    --warning-subtle: 58  42  14;  --warning-border: 97  70  22;  --warning-fg: 240 204 130;  --warning-solid: 214 160  50;
+    --info-subtle:    16  48  34;  --info-border:    28  78  56;  --info-fg:    144 214 178;  --info-solid:     58 158 112;
+    --success-subtle: 20  48  28;  --success-border: 34  78  46;  --success-fg: 150 214 160;  --success-solid:  66 160  88;
+    --danger-subtle:  58  26  28;  --danger-border:  96  44  48;  --danger-fg:  240 168 174;  --danger-solid: 200  84  94;
+
+    --scrim:       8   6   4;
+    --tooltip:    38  56  46;
+    --on-tooltip: 245 238 223;
+    --ring:      102 196 146;
+    --shadow:      0   0   0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Base
+   ══════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-ink antialiased;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+    overflow-x: hidden;
+    /* Retheme without a flash of the wrong palette. */
+    transition: background-color 200ms ease-out, color 200ms ease-out;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-semibold text-ink;
+    text-wrap: balance;
+  }
+
+  /* Display headings take the condensed face and crimson, as in the reference 
+     reserved for page/section titles so the colour stays an accent. */
+  .display {
+    @apply font-display font-extrabold uppercase tracking-[-0.01em] text-crimson;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Data and scores must not jitter as digits change. */
+  .tabular-nums, [class*='tabular'] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* One consistent, always-visible keyboard focus treatment. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring/70 ring-offset-2;
+    --tw-ring-offset-color: rgb(var(--bg));
+  }
+
+  /* Range inputs: recruiter trait sliders. */
+  input[type='range'] {
+    @apply h-1.5 w-full cursor-pointer appearance-none rounded-full bg-line;
+    background-image: linear-gradient(rgb(var(--primary)), rgb(var(--primary)));
+    background-repeat: no-repeat;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    @apply h-4 w-4 appearance-none rounded-full border-2 border-card bg-primary shadow-lift;
+    transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  input[type='range']::-webkit-slider-thumb:active {
+    transform: scale(1.18);
+  }
+  input[type='range']::-moz-range-thumb {
+    @apply h-4 w-4 rounded-full border-2 border-card bg-primary;
+  }
+
+  /* Native controls follow the theme (date/time pickers, checkboxes). */
+  input[type='date'], input[type='time'], input[type='month'] {
+    color-scheme: inherit;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply rounded-full bg-line-strong; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-faint; }
+
+  ::selection { @apply bg-accent-600/20 text-ink; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Components
+   ══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ink-soft;
+  }
+
+  .field-input {
+    @apply w-full rounded-lg border border-line bg-raised px-3.5 py-2.5 text-sm text-ink
+           outline-none transition-[border-color,box-shadow] duration-200 ease-out
+           placeholder:text-ink-faint
+           hover:border-line-strong
+           focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15
+           disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-ink-muted;
+    /* 44px min touch target on mobile */
+    min-height: 2.75rem;
+  }
+
+  .field-hint {
+    @apply mt-1.5 text-xs text-ink-muted;
+  }
+
+  .section-title {
+    @apply text-base font-semibold text-ink;
+  }
+
+  .link-quiet {
+    @apply text-ink-soft transition-colors duration-150 hover:text-ink;
+  }
+
+  /*
+   * Inline call-to-action links inside cards. On touch widths the hit area is
+   * padded out to 44px and pulled back with a negative margin, so the target
+   * grows without moving any surrounding content.
+   */
+  .link-cta {
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-accent-700
+           transition-colors duration-150 hover:text-accent-800
+           min-h-[44px] -my-2 sm:min-h-0 sm:my-0;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-primary;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Utilities
+   ══════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Faint modular grid: the Swiss substrate, not decoration. */
+  /* Warm paper ground with a barely-there texture, in place of the old grid. */
+  .grid-bg {
+    background-image:
+      radial-gradient(rgb(var(--fg) / 0.035) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .hairline-t { box-shadow: inset 0 1px 0 0 rgb(var(--border)); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Accessibility: honour reduced-motion everywhere
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
