@@ -1,5 +1,7 @@
 # VHuman
 
+**Bản demo đang chạy: https://ndducnha.github.io/vhuman/**
+
 > **Hiểu con người. Tìm đúng hướng đi.**
 >
 > Nền tảng Talent Intelligence kết hợp CV, kỹ năng và hồ sơ cá nhân để giúp một cá nhân
@@ -81,6 +83,12 @@ Hồ sơ bạn tự tạo cũng xuất hiện trong kết quả tìm kiếm ở 
 ## Tính năng
 
 ### Dành cho ứng viên
+- **Việc làm**: danh sách tin tuyển dụng xếp theo mức phù hợp với hồ sơ, lọc theo lĩnh vực,
+  địa điểm, cấp bậc
+- **Chi tiết tin** kèm phân tích khớp kỹ năng, kinh nghiệm, hồ sơ cá nhân, và kỹ năng còn thiếu
+- **Ứng tuyển** kèm lời giới thiệu, rút đơn, theo dõi trạng thái từng đơn
+- **Lộ trình 24 tháng**: gộp kỹ năng còn thiếu của nhóm nghề phù hợp nhất với gợi ý hành động
+  theo đại vận và lưu niên, tự đánh dấu hoàn thành
 - **Hai chế độ xem: Evidence ⇄ Destiny**
   - *Evidence*: CV, kỹ năng, kinh nghiệm, Personal Profile 8 chiều, Top nghề phù hợp
   - *Destiny*: Personal Blueprint: nhóm sao Tử Vi, Đại Vận, Lưu Niên kèm gợi ý hành động
@@ -96,6 +104,9 @@ Hồ sơ bạn tự tạo cũng xuất hiện trong kết quả tìm kiếm ở 
   radar giữa hồ sơ của bạn và đặc điểm nhóm nghề
 
 ### Dành cho nhà tuyển dụng
+- **Đơn ứng tuyển**: xem toàn bộ hồ sơ đã nộp, đổi trạng thái theo sáu giai đoạn, ghi chú nội bộ
+- **Chi tiết tin tuyển dụng**: đơn đã nộp cho tin đó, cộng danh sách ứng viên phù hợp trong nguồn
+- **Ứng viên đã lưu** có giai đoạn theo dõi và ghi chú riêng
 - **Dashboard riêng** với sidebar (desktop) / drawer (mobile)
 - **Mode 1: Tìm theo Personal Profile**: 8 thanh trượt mô tả mẫu hồ sơ mong muốn
 - **Mode 2: Tìm theo Compatibility**: tạo hồ sơ người quản lý / CEO, xếp hạng ứng viên theo mức
@@ -320,6 +331,35 @@ npm run lint        # ESLint
 ---
 
 ## Deploy GitHub Pages
+
+Bản demo hiện deploy từ nhánh `gh-pages`, vì token đang dùng chưa có scope `workflow`
+nên chưa đẩy được file CI lên.
+
+### Cách đang dùng: deploy thủ công từ nhánh gh-pages
+
+```bash
+npm run build
+touch dist/.nojekyll
+cp dist/index.html dist/404.html
+# đẩy nội dung dist lên nhánh gh-pages
+```
+
+Trong Settings của repo, Pages đang trỏ vào nhánh `gh-pages`, thư mục gốc.
+
+### Cách nên dùng về lâu dài: CI tự động
+
+Cấp thêm quyền cho token rồi đẩy file workflow lên:
+
+```bash
+gh auth refresh -s workflow
+# xoá dòng .github/workflows/deploy.yml trong .gitignore
+git add .github/workflows/deploy.yml && git commit -m "ci: deploy Pages" && git push
+```
+
+Sau đó vào Settings, Pages, đổi Source sang GitHub Actions. Từ đó mỗi lần đẩy lên
+`main` là tự build và deploy.
+
+### Cách cũ (tham khảo)
 
 1. Push code lên GitHub (nhánh `main`).
 2. Vào **Repository → Settings → Pages → Source → chọn "GitHub Actions"**.
