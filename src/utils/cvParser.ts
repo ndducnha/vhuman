@@ -83,6 +83,9 @@ export function parseCvText(raw: string): ParsedCv {
 /**
  * Sums date ranges like "2019 - 2022", "03/2020 - hiện tại", "2018-nay".
  * Overlapping ranges are merged so concurrent roles are not double counted.
+ *
+ * Khoảng thời gian đi học bị loại. Trước đây "Đại học ... (2013 - 2017)" được
+ * cộng thẳng vào, nên một CV chín năm đi làm lại báo mười ba năm kinh nghiệm.
  */
 function inferYears(text: string): number | null {
   const now = new Date().getFullYear()
@@ -90,12 +93,27 @@ function inferYears(text: string): number | null {
   const pattern =
     /(\d{1,2}\/)?(\d{4})\s*[-–—]\s*((\d{1,2}\/)?(\d{4})|hi[eệ]n t[aạ]i|nay|present|now)/gi
 
-  for (const match of text.matchAll(pattern)) {
-    const from = Number(match[2])
-    const toRaw = match[3]
-    const to = /^\d/.test(toRaw) ? Number(match[5]) : now
-    if (!from || from < 1970 || from > now || to < from || to > now + 1) continue
-    ranges.push([from, Math.min(to, now)])
+  const EDU_HEADING = /^(hoc van|education|bang cap|qua trinh hoc tap|trinh do hoc van)\b/
+  const WORK_HEADING = /^(kinh nghiem|experience|qua trinh cong tac|lich su lam viec|du an)\b/
+  const EDU_LINE =
+    /(dai hoc|cao dang|trung cap|truong |tot nghiep|cu nhan|thac si|tien si|bachelor|master|university|college|gpa)/
+
+  let inEducation = false
+  for (const rawLine of text.split(/\r?\n/)) {
+    const flat = normalize(rawLine).trim()
+    if (flat && rawLine.trim().length <= 60) {
+      if (EDU_HEADING.test(flat)) { inEducation = true; continue }
+      if (WORK_HEADING.test(flat)) { inEducation = false }
+    }
+    if (inEducation || EDU_LINE.test(flat)) continue
+
+    for (const match of rawLine.matchAll(pattern)) {
+      const from = Number(match[2])
+      const toRaw = match[3]
+      const to = /^\d/.test(toRaw) ? Number(match[5]) : now
+      if (!from || from < 1970 || from > now || to < from || to > now + 1) continue
+      ranges.push([from, Math.min(to, now)])
+    }
   }
   if (ranges.length === 0) return null
 
@@ -118,7 +136,18 @@ function escapeRegExp(value: string): string {
 /** File types the browser can read as text without any extra library. */
 export const READABLE_EXTENSIONS = ['.txt', '.md', '.csv', '.json', '.rtf'] as const
 
+/** Thêm PDF: đọc được nhưng phải nạp pdf.js, nên tách riêng khỏi nhóm trên. */
+export const SUPPORTED_EXTENSIONS = [...READABLE_EXTENSIONS, '.pdf'] as const
+
 export function isReadableFile(file: File): boolean {
   const name = file.name.toLowerCase()
   return READABLE_EXTENSIONS.some((ext) => name.endsWith(ext)) || file.type.startsWith('text/')
+}
+
+/** Mọi định dạng luồng tải CV nhận, kể cả loại cần thư viện phụ. */
+export function isSupportedCvFile(file: File): boolean {
+  const name = file.name.toLowerCase()
+  return (
+    isReadableFile(file) || name.endsWith('.pdf') || file.type === 'application/pdf'
+  )
 }

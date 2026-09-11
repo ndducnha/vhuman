@@ -14,7 +14,9 @@ import { tuviCareerEngine } from '@/services/astrology'
 import { calculateCareerFit } from '@/services/matching'
 import { CAREERS } from '@/data/careers'
 import { CAREER_FAMILIES, CAREER_MODES, TRAIT_LABEL_VI } from '@/data/tuvi'
-import { isReadableFile, parseCvText, type ParsedCv } from '@/utils/cvParser'
+import { parseCvText, type ParsedCv } from '@/utils/cvParser'
+import { isSupportedCvFile } from '@/utils/cvParser'
+import { readCvFile } from '@/utils/pdfText'
 import { cn } from '@/utils/cn'
 import type { Candidate, CandidateSkill, Gender } from '@/types'
 import type { CareerTraitKey } from '@/types/tuvi'
@@ -88,6 +90,8 @@ export function QuickDemoPage() {
   const [gender, setGender] = useState<Gender>('male')
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
+  const [reading, setReading] = useState(false)
+  const [note, setNote] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
@@ -109,17 +113,29 @@ export function QuickDemoPage() {
 
   const readFile = async (file: File) => {
     setError('')
-    if (!isReadableFile(file)) {
+    setNote('')
+    setSubmitted(false)
+    if (!isSupportedCvFile(file)) {
       setFileName('')
       setError(
-        `Không đọc được “${file.name}”. Trình duyệt chỉ đọc trực tiếp .txt, .md, .csv. ` +
-          'Với PDF hoặc Word, bạn mở file rồi dán nội dung vào ô bên dưới.',
+        `Không đọc được “${file.name}”. Luồng này nhận .pdf, .txt, .md, .csv. ` +
+          'Với Word, bạn mở file rồi dán nội dung vào ô bên dưới.',
       )
       return
     }
+    setReading(true)
     setFileName(file.name)
-    setText(await file.text())
-    setSubmitted(false)
+    try {
+      const { text: content, note: hint } = await readCvFile(file)
+      setText(content)
+      if (hint) setNote(hint)
+    } catch (e) {
+      setFileName('')
+      setText('')
+      setError(e instanceof Error ? e.message : 'Không đọc được file này.')
+    } finally {
+      setReading(false)
+    }
   }
 
   const run = () => {
@@ -138,13 +154,13 @@ export function QuickDemoPage() {
 
   const reset = () => {
     setText(''); setFileName(''); setBirthDate(''); setBirthTime('')
-    setGender('male'); setError(''); setSubmitted(false)
+    setGender('male'); setError(''); setNote(''); setSubmitted(false)
   }
 
   const fillSample = () => {
     setText(SAMPLE_CV); setFileName('cv-mau.txt')
     setBirthDate('1994-08-17'); setBirthTime('07:30'); setGender('male')
-    setError(''); setSubmitted(false)
+    setError(''); setNote(''); setSubmitted(false)
   }
 
   return (
@@ -174,12 +190,18 @@ export function QuickDemoPage() {
               onClick={() => inputRef.current?.click()}
               className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-line bg-surface-sunken px-4 py-6 text-center transition hover:border-primary hover:bg-primary/5"
             >
-              <Upload className="h-6 w-6 text-ink-soft" />
-              <p className="text-sm font-medium text-ink">Kéo file CV vào đây hoặc bấm để chọn</p>
-              <p className="text-xs text-ink-soft">Nhận .txt, .md, .csv</p>
+              {reading ? (
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              ) : (
+                <Upload className="h-6 w-6 text-ink-soft" />
+              )}
+              <p className="text-sm font-medium text-ink">
+                {reading ? 'Đang đọc file' : 'Kéo file CV vào đây hoặc bấm để chọn'}
+              </p>
+              <p className="text-xs text-ink-soft">Nhận .pdf, .txt, .md, .csv</p>
               <input
                 ref={inputRef} type="file" className="hidden"
-                accept=".txt,.md,.csv,.json,.rtf"
+                accept=".pdf,.txt,.md,.csv,.json,.rtf"
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (f) void readFile(f)
@@ -210,6 +232,7 @@ export function QuickDemoPage() {
             />
 
             {error && <p className="text-sm text-danger-fg">{error}</p>}
+            {note && !error && <p className="text-sm text-ink-soft">{note}</p>}
 
             {parsed && (
               <div className="rounded-lg border border-line bg-surface-sunken p-3">
@@ -272,7 +295,7 @@ export function QuickDemoPage() {
           <div className="space-y-2">
             <Button
               className="w-full" size="lg" onClick={run}
-              disabled={!ready || running}
+              disabled={!ready || running || reading}
             >
               {running ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Đang phân tích</>

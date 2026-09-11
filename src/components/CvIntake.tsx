@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react'
-import { CheckCircle2, FileText, Upload, X } from 'lucide-react'
+import { CheckCircle2, FileText, Loader2, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { TextArea } from '@/components/ui/Field'
 import { SkillTag } from '@/components/ui/SkillTag'
 import { cn } from '@/utils/cn'
-import { isReadableFile, parseCvText, type ParsedCv } from '@/utils/cvParser'
+import { isSupportedCvFile, parseCvText, type ParsedCv } from '@/utils/cvParser'
+import { readCvFile } from '@/utils/pdfText'
 import type { CandidateSkill } from '@/types'
 
 /**
@@ -26,24 +27,38 @@ export function CvIntake({
   const [result, setResult] = useState<ParsedCv | null>(null)
   const [error, setError] = useState('')
   const [dragging, setDragging] = useState(false)
+  const [reading, setReading] = useState(false)
+  const [note, setNote] = useState('')
   const [applied, setApplied] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const readFile = async (file: File) => {
     setError('')
+    setNote('')
     setApplied(false)
-    if (!isReadableFile(file)) {
+    if (!isSupportedCvFile(file)) {
       setFileName('')
       setError(
-        `Không đọc được “${file.name}”. Trình duyệt chỉ đọc trực tiếp được .txt, .md, .csv. ` +
-          'Với PDF hoặc Word, bạn hãy mở file rồi dán nội dung vào ô bên dưới.',
+        `Không đọc được “${file.name}”. Luồng này nhận .pdf, .txt, .md, .csv. ` +
+          'Với Word, bạn hãy mở file rồi dán nội dung vào ô bên dưới.',
       )
       return
     }
-    const content = await file.text()
+    setReading(true)
     setFileName(file.name)
-    setText(content)
-    analyse(content)
+    try {
+      const { text: content, note: hint } = await readCvFile(file)
+      setText(content)
+      if (hint) setNote(hint)
+      analyse(content)
+    } catch (e) {
+      setFileName('')
+      setText('')
+      setResult(null)
+      setError(e instanceof Error ? e.message : 'Không đọc được file này.')
+    } finally {
+      setReading(false)
+    }
   }
 
   const analyse = (content: string) => {
@@ -62,6 +77,7 @@ export function CvIntake({
     setFileName('')
     setResult(null)
     setError('')
+    setNote('')
     setApplied(false)
     if (inputRef.current) inputRef.current.value = ''
   }
@@ -100,15 +116,21 @@ export function CvIntake({
             dragging ? 'border-primary bg-accent-50/60' : 'border-line-strong bg-surface-sunken/50',
           )}
         >
-          <Upload className="mx-auto mb-3 h-5 w-5 text-ink-faint" />
-          <p className="text-sm font-medium text-ink">Kéo thả CV vào đây</p>
+          {reading ? (
+            <Loader2 className="mx-auto mb-3 h-5 w-5 animate-spin text-primary" />
+          ) : (
+            <Upload className="mx-auto mb-3 h-5 w-5 text-ink-faint" />
+          )}
+          <p className="text-sm font-medium text-ink">
+            {reading ? 'Đang đọc file' : 'Kéo thả CV vào đây'}
+          </p>
           <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-ink-muted">
-            Đọc trực tiếp được .txt, .md, .csv. Với PDF hoặc Word, bạn mở file rồi dán nội dung vào ô bên dưới.
+            Đọc được .pdf, .txt, .md, .csv. Với Word, bạn mở file rồi dán nội dung vào ô bên dưới.
           </p>
           <input
             ref={inputRef}
             type="file"
-            accept=".txt,.md,.csv,.json,.rtf,text/*"
+            accept=".pdf,.txt,.md,.csv,.json,.rtf,text/*"
             className="sr-only"
             id="cv-file"
             onChange={(event) => {
@@ -155,6 +177,8 @@ export function CvIntake({
             {error}
           </p>
         ) : null}
+
+        {note && !error ? <p className="text-xs text-ink-muted">{note}</p> : null}
 
         {/* Result */}
         {result ? (
