@@ -335,14 +335,19 @@ npm run lint        # ESLint
 Bản demo hiện deploy từ nhánh `gh-pages`, vì token đang dùng chưa có scope `workflow`
 nên chưa đẩy được file CI lên.
 
-### Cách đang dùng: deploy thủ công từ nhánh gh-pages
+### Cách đang dùng: một lệnh
 
 ```bash
-npm run build
-touch dist/.nojekyll
-cp dist/index.html dist/404.html
-# đẩy nội dung dist lên nhánh gh-pages
+npm run deploy
 ```
+
+Script `scripts/deploy-pages.sh` sẽ build, kiểm tra bản build hợp lệ, đẩy lên nhánh
+`gh-pages`, yêu cầu GitHub build lại, rồi kiểm tra trang live trả về 200. Sai ở bước
+nào là dừng ngay ở bước đó.
+
+Script kiểm tra hai thứ dễ sai nhất: `dist/index.html` không được trỏ tới
+`src/main.tsx` (đó là file nguồn, không phải bản build), và phải tham chiếu đúng
+bundle đã đóng gói.
 
 Trong Settings của repo, Pages đang trỏ vào nhánh `gh-pages`, thư mục gốc.
 
